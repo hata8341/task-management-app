@@ -2,7 +2,9 @@
   <v-app>
     <v-card-actions>
       <v-btn color="">
-        <v-icon>mdi-plus</v-icon>
+        <v-icon
+          @click="sendNewTask"
+        >mdi-plus</v-icon>
       </v-btn>
     </v-card-actions>
   </v-app>
@@ -10,11 +12,22 @@
 
 <script>
 export default {
+  props: {
+    initialSection: {
+      type: Object,
+      require: true,
+    },
+  },
   data() {
     return{
-
+      section: this.initialSection,
     }
   },
+  methods: {
+    sendNewTask: function(){
+      this.$emit('addNewTask');
+    }
+  }
 }
 </script>
 

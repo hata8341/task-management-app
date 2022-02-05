@@ -6,65 +6,74 @@
           type="text"
           label="task-title"
           v-model="inputTaskTitle"
-          @blur="sendTaskTitle()"
-          v-show="isTaskTtl"
+          @blur="sendTaskTitle(task,taskId)"
+          v-show="task.isEditTitle"
         >
         </v-text-field>
         <v-card
-        @dblclick="editTaskTtl"
-        v-show="!isTaskTtl"
+        @dblclick="editTaskTtl(task)"
+        v-show="!task.isEditTitle"
         class="py-4"
         elevation-1
         >
-        <!-- {{task.title}} -->
+        {{ task.title }}
         </v-card>
-        <v-card-title>セクション名：{{ section.title }}</v-card-title>
+        <v-select
+          v-model="selectSection"
+          @change="sendSectionIdTaskId(selectSection, taskId)"
+          :items="sectionTitleList"
+          item-text="title"
+          item-value="id"
+          label="セクション"
+          class="mt-3"
+          outlined
+        ></v-select>
         <v-textarea
         label="task-content"
-        @blur="sendTaskContent()"
-        v-show="isTaskContent"
+        @blur="sendTaskContent(task, taskId)"
+        v-show="task.isEditContent"
         v-model="inputTaskContent"
         ></v-textarea>
         <v-card-text
-        @dblclick="editTaskContent"
-        v-show="!isTaskContent"
+        @dblclick="editTaskContent(task)"
+        v-show="!task.isEditContent"
         >
         {{task.content}}
         </v-card-text>
       </v-form>
       <div class="d-flex justify-end">
         <v-btn
-          @click="editTaskContent"
+          @click="editTaskContent(task)"
         >
           <v-icon
             class="mx-1"
-            :color="isTaskContent? 'primary':''"
+            :color="task.isEditContent? 'primary':''"
           >
           mdi-border-color
           </v-icon>
         </v-btn>
         <v-btn
-          @click="isCheck = !isCheck"
+          @click="sendIsCheck(taskId)"
         >
           <v-icon
             class="mx-1"
-            :color="isCheck? 'cyan':''"
+            :color="task.isCheck? 'cyan':''"
           >
           mdi-check
           </v-icon>
         </v-btn>
         <v-btn
-          @click="isStar = !isStar"
+          @click="sendIsStar(taskId)"
         >
           <v-icon
             class="mx-1"
-            :color="isStar? 'yellow':''"
+            :color="task.isStar? 'yellow':''"
           >
           mdi-star
           </v-icon>
         </v-btn>
         <v-btn
-          @click="$emit('taskDelete')"
+          @click="$emit('taskDelete',taskId)"
         >
           <v-icon
             class="mx-1"
@@ -72,9 +81,6 @@
           mdi-delete
           </v-icon>
         </v-btn>
-        <!-- <v-btn><v-icon class="mx-1" color="">mdi-check</v-icon></v-btn>
-        <v-btn><v-icon class="mx-1" color="">mdi-star</v-icon></v-btn>
-        <v-btn><v-icon class="mx-1" color="">mdi-delete</v-icon></v-btn> -->
       </div>
     </v-card>
   </v-app>
@@ -88,44 +94,71 @@ export default {
       type: Object,
       require: true,
     },
+    initialSections: {
+      type: [],
+      require: true,
+    },
     initialTask: {
       type: Object,
+      require: true,
+    },
+    initialTaskId: {
+      type: Number,
       require: true,
     }
   },
   data() {
     return{
-      isTaskTtl: false,
-      isTaskContent: false,
-      isCheck: false,
-      isStar: false,
       inputTaskTitle: '',
       inputTaskContent: '',
       section: this.initialSection,
+      sections: this.initialSections,
       task: this.initialTask,
+      taskId: this.initialTaskId,
+      selectSection: {
+        id: this.initialSection.id,
+        title: this.initialSection.title,
+      },
     }
   },
   methods: {
-    editTaskTtl: function(){
-      return this.isTaskTtl = !this.isTaskTtl;
+    editTaskTtl: function(task){
+      return task.isEditTitle = !task.isEditTitle;
     },
-    editTaskContent: function(){
-      return this.isTaskContent = !this.isTaskContent;
+    editTaskContent: function(task){
+      return task.isEditContent = !task.isEditContent;
     },
-    sendTaskTitle: function(){
-      this.editTaskTtl();
-      this.$emit("editTaskTtl", this.inputTaskTitle);
+    sendTaskTitle: function(task, index){
+      this.editTaskTtl(task);
+      this.$emit("editTaskTtl", this.inputTaskTitle, index);
+      this.inputTaskTitle = "";
     },
-    sendTaskContent: function(){
-      this.editTaskContent();
-      this.$emit("editTaskContent", this.inputTaskContent);
+    sendTaskContent: function(task, index){
+      this.editTaskContent(task);
+      this.$emit("editTaskContent", this.inputTaskContent, index);
+      this.inputTaskContent = "";
     },
-    sendTaskDelete: function(){
-      this.$emit("taskDelete");
+    sendIsCheck: function(index){
+      this.$emit("signIsCheck", index);
+    },
+    sendIsStar: function(index){
+      this.$emit('signIsStar', index);
+    },
+    sendSectionIdTaskId: function(sectionId, taskIndex){
+      this.$emit("changeTask", sectionId, taskIndex)
     }
   },
   computed: {
-
+    initSectionTitle: function(){
+      return this.section.title;
+    },
+    sectionTitleList: function(){
+      return this.sections
+              .filter(section => section.title != null);
+    }
+  },
+  created() {
+    // console.log(this.section);
   }
 }
 </script>
@@ -144,5 +177,8 @@ export default {
   }
   ::v-deep .v-btn--is-elevated{
     box-shadow: unset;
+  }
+  ::v-deep .v-text-field--outlined > .v-input__control > .v-input__slot {
+    min-height: unset;
   }
 </style>

@@ -17,15 +17,24 @@
         class="mb-2 py-4 px-2" elevation-2>
         {{ section.title }}
       </v-card>
-      <v-spacer></v-spacer>
       <task
+      v-for="(task, index) in section.taskList"
+      :key="index"
       :initialSection="section"
+      :initialSections="sections"
       :initialTask="task"
+      :initialTaskId="index"
       @editTaskTtl='refTaskTitle'
       @editTaskContent="refTaskContent"
+      @signIsCheck="refIsCheck"
+      @signIsStar="refIsStar"
+      @changeTask="refChangeTask"
       @taskDelete="refTaskDelete"
       />
-      <task-new />
+      <task-new
+        :initialSection="section"
+        @addNewTask="refNewTask"
+      />
     </v-card>
   </v-app>
 </template>
@@ -35,45 +44,65 @@ import Task from './Task.vue'
 import TaskNew from './TaskNew.vue'
 export default {
   components: { Task, TaskNew },
-  props:['initialSection','index'],
+  props:['initialSection','initialSections','index'],
   data() {
     return {
       isSecTtl: false,
       inputSectionTitle: '',
       section: this.initialSection,
+      sections: this.initialSections,
       i: this.index,
-      task: {
-        sectionId: null,
-        title: null,
-        content: null,
-      },
     }
   },
   methods:{
     editSecTtl: function(){
       return this.isSecTtl = !this.isSecTtl;
     },
-    createSecIdTtl: function(i,title){
-      this.section.id = i + 1;
-      this.section.title = title;
-      return this.section
-    },
     sendSectionTitle: function(){
       this.editSecTtl();
-      this.$emit("editSectionTitle", this.inputSectionTitle);
+      this.$emit("editSectionTitle", this.inputSectionTitle, this.i);
     },
-    refTaskTitle: function(value){
-      console.log(value);
+    refNewTask: function(){
+      this.$emit('addNewTask', this.i);
     },
-    refTaskContent: function(value){
-      console.log(value);
+    refTaskTitle: function(taskTitle, index){
+      this.section.taskList[index].title = taskTitle;
+      return this.section;
     },
-    refTaskDelete: function(){
-      alert("タスク削除の通知です");
+    refTaskContent: function(taskContent, index){
+      this.section.taskList[index].content = taskContent;
+    },
+    refIsCheck: function(index){
+      this.section.taskList[index].isCheck = !this.section.taskList[index].isCheck;
+    },
+    refIsStar: function(index){
+      this.section.taskList[index].isStar = !this.section.taskList[index].isStar;
+    },
+    refChangeTask: function(sectionId,taskIndex){
+      // 値渡しのため
+      let currTask = this.section.taskList[taskIndex];
+      let newTaskTitle = currTask.title;
+      let newTaskContent = currTask.content;
+      let newIsEditTitle = currTask.isEditTitle;
+      let newIsEditContent = currTask.isEditContent;
+      let newIsCheck = currTask.isCheck;
+      let newIsStar = currTask.isStar;
+      let newTask = {
+        sectionId: sectionId,
+        title: newTaskTitle,
+        content: newTaskContent,
+        isEditTitle: newIsEditTitle,
+        isEditContent: newIsEditContent,
+        isCheck: newIsCheck,
+        isStar: newIsStar,
+      }
+      this.refTaskDelete(taskIndex);
+      this.$emit('changeTask', sectionId, newTask);
+
+    },
+    refTaskDelete: function(index){
+      this.section.taskList.splice(index,1);
     }
   },
-  created: function(){
-    // console.log(this.section.id);
-  }
 }
 </script>
