@@ -25,4 +25,5 @@ yarn lint
 See [Configuration Reference](https://cli.vuejs.org/config/).
 =======
 # task-management-app
->>>>>>> origin/main
+# pages:
+https://hata8341.github.io/task-management-app/
