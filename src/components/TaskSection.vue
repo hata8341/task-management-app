@@ -79,26 +79,15 @@ export default {
       this.section.taskList[index].isStar = !this.section.taskList[index].isStar;
     },
     refChangeTask: function(sectionId,taskIndex){
-      // 値渡しのため
-      let currTask = this.section.taskList[taskIndex];
-      let newTaskTitle = currTask.title;
-      let newTaskContent = currTask.content;
-      let newIsEditTitle = currTask.isEditTitle;
-      let newIsEditContent = currTask.isEditContent;
-      let newIsCheck = currTask.isCheck;
-      let newIsStar = currTask.isStar;
-      let newTask = {
-        sectionId: sectionId,
-        title: newTaskTitle,
-        content: newTaskContent,
-        isEditTitle: newIsEditTitle,
-        isEditContent: newIsEditContent,
-        isCheck: newIsCheck,
-        isStar: newIsStar,
-      }
+      const currTask = this.section.taskList[taskIndex];
+      // スプレット構文でオブジェクトを値渡しする
+      const newTask = {...currTask};
+      // Object.assign()メソッドでオブジェクトを値渡しする
+      // Object.assign(target'{}空のオブジェクト', source'コピーするタスク')
+      // const newTask = Object.assign({},currTask);
       this.refTaskDelete(taskIndex);
       this.$emit('changeTask', sectionId, newTask);
-
+      return this.section;
     },
     refTaskDelete: function(index){
       this.section.taskList.splice(index,1);

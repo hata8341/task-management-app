@@ -157,9 +157,6 @@ export default {
               .filter(section => section.title != null);
     }
   },
-  created() {
-    // console.log(this.section);
-  }
 }
 </script>
 

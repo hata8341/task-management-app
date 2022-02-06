@@ -56,8 +56,9 @@ export default {
       });
     },
     refChangeTask: function(sectionId, newTask){
+      newTask.sectionId = sectionId
       this.sections[sectionId-1].taskList.push(newTask);
-
+      return this.sections;
     },
     refTaskDelete: function(index){
       this.section.taskList.splice(index,1);
