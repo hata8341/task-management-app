@@ -40,8 +40,8 @@
 </template>
 
 <script>
-import Task from './Task.vue'
-import TaskNew from './TaskNew.vue'
+import Task from './Task.vue';
+import TaskNew from './TaskNew.vue';
 export default {
   components: { Task, TaskNew },
   props:['initialSection','initialSections','index'],
@@ -79,7 +79,7 @@ export default {
       this.section.taskList[index].isStar = !this.section.taskList[index].isStar;
     },
     refChangeTask: function(sectionId,taskIndex){
-      const currTask = this.section.taskList[taskIndex];
+      let currTask = this.section.taskList[taskIndex];
       // スプレット構文でオブジェクトを値渡しする
       const newTask = {...currTask};
       // Object.assign()メソッドでオブジェクトを値渡しする
