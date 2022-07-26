@@ -1,6 +1,10 @@
-<<<<<<< HEAD
 # task_management_app
 
+## Demo
+## Descripition
+## feature
+# URL:
+https://hata8341.github.io/task-management-app/
 ## Project setup
 ```
 yarn install
@@ -20,10 +24,3 @@ yarn build
 ```
 yarn lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-=======
-# task-management-app
-# pages:
-https://hata8341.github.io/task-management-app/
